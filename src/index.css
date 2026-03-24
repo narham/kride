@@ -94,6 +94,9 @@
   }
 }
 
+/* Leaflet CSS */
+@import "leaflet/dist/leaflet.css";
+
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;

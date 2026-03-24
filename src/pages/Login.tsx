@@ -3,16 +3,70 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Smartphone } from "lucide-react";
+import { ArrowLeft, Smartphone, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [phone, setPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone) {
-      navigate("/");
+    if (!phone) return;
+
+    setIsLoading(true);
+    try {
+      // For Klumpang GO, we simulate OTP login with Supabase
+      // In a real app, you would use supabase.auth.signInWithOtp
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: `+62${phone}`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "OTP Dikirim",
+        description: "Silakan cek pesan masuk di nomor HP-mu.",
+      });
+      
+      // For demo purposes, we navigate directly after showing toast
+      // In production, you'd show an OTP input field
+      setTimeout(() => navigate("/"), 2000);
+    } catch (error: any) {
+      console.error("Login error:", error);
+      toast({
+        variant: "destructive",
+        title: "Login Gagal",
+        description: error.message || "Terjadi kesalahan saat mencoba masuk.",
+      });
+      
+      // Fallback for development if Supabase isn't configured yet
+      if (error.message?.includes("Supabase URL or Anon Key is missing")) {
+        navigate("/");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'github') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Login Gagal",
+        description: error.message,
+      });
     }
   };
 
@@ -56,9 +110,10 @@ const Login = () => {
           <div className="space-y-4">
             <Button 
               type="submit" 
+              disabled={isLoading}
               className="w-full py-7 rounded-2xl bg-primary text-white font-black text-base uppercase tracking-widest shadow-xl shadow-primary/20 active:scale-[0.98] transition-all"
             >
-              Lanjut
+              {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : "Lanjut"}
             </Button>
             <p className="text-[10px] text-center text-muted-foreground leading-relaxed px-4">
               Dengan masuk, kamu menyetujui <span className="text-primary font-bold">Ketentuan Layanan</span> dan <span className="text-primary font-bold">Kebijakan Privasi</span> Klumpang GO.
@@ -74,7 +129,10 @@ const Login = () => {
             <span className="relative bg-background px-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Atau masuk dengan</span>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-3 py-4 rounded-2xl border border-border hover:bg-muted transition-all active:scale-95 font-bold text-sm">
+            <button 
+              onClick={() => handleSocialLogin('google')}
+              className="flex items-center justify-center gap-3 py-4 rounded-2xl border border-border hover:bg-muted transition-all active:scale-95 font-bold text-sm"
+            >
               <img src="https://www.google.com/favicon.ico" className="h-4 w-4" alt="Google" />
               Google
             </button>

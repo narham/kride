@@ -2,6 +2,7 @@ import DriverLayout from "@/components/driver/DriverLayout";
 import { DollarSign, BarChart3, Star, MapPin, ChevronRight, Package, Bike, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import MapComponent from "@/components/MapComponent";
 
 const DriverHome = () => {
   const navigate = useNavigate();
@@ -12,15 +13,23 @@ const DriverHome = () => {
   ];
 
   const incomingOrders = [
-    { id: "ORD-1234", type: "K-Ride", distance: "2.5 km", amount: "Rp 15.000", pickup: "Jl. Sudirman No. 12", destination: "Malioboro Mall", color: "bg-primary" },
-    { id: "ORD-5678", type: "K-Food", distance: "1.2 km", amount: "Rp 12.000", pickup: "Ayam Geprek Bu Rum", destination: "Perumahan Indah Permai", color: "bg-destructive" },
+    { id: "ORD-1234", type: "K-Ride", distance: "2.5 km", amount: "Rp 15.000", pickup: "Jl. Sudirman No. 12", destination: "Malioboro Mall", color: "bg-primary", lat: -6.210000, lng: 106.820000 },
+    { id: "ORD-5678", type: "K-Food", distance: "1.2 km", amount: "Rp 12.000", pickup: "Ayam Geprek Bu Rum", destination: "Perumahan Indah Permai", color: "bg-destructive", lat: -6.190000, lng: 106.810000 },
   ];
 
   return (
     <DriverLayout>
       <div className="flex flex-col gap-8 p-4">
+        {/* Map View for Driver */}
+        <section aria-label="Peta Lokasi" className="relative">
+          <MapComponent 
+            height="200px" 
+            markers={incomingOrders.map(o => ({ lat: o.lat, lng: o.lng }))} 
+          />
+        </section>
+
         {/* Today's Summary */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
+        <div className="grid grid-cols-3 gap-3 mt-0">
           {summary.map((item) => (
             <div 
               key={item.label} 

@@ -47,28 +47,25 @@ export default function AdminSettings() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Google Maps Configuration */}
+            {/* Maps Configuration */}
             <TabsContent value="maps">
               <Card className="border-none shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Map className="h-5 w-5 text-primary" />
-                    Google Maps Platform
+                    Peta (OpenStreetMap)
                   </CardTitle>
-                  <CardDescription>Digunakan untuk Autocomplete, Geocoding, dan Directions API.</CardDescription>
+                  <CardDescription>Aplikasi saat ini menggunakan OpenStreetMap (OSM) yang bersifat open-source.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="google-maps-key">API Key</Label>
-                    <div className="relative">
-                      <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="google-maps-key" type="password" placeholder="AIzaSy..." className="pl-10" />
-                    </div>
-                    <p className="text-[10px] text-muted-foreground">Pastikan Maps SDK for Android/iOS, Places API, dan Directions API aktif.</p>
+                  <div className="p-4 rounded-2xl bg-muted/50 border border-dashed border-muted-foreground/30">
+                    <p className="text-sm font-bold text-muted-foreground italic">
+                      Integrasi OpenStreetMap aktif dengan Nominatim Search. Tidak diperlukan API Key.
+                    </p>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="map-id">Map ID (Opsional)</Label>
-                    <Input id="map-id" placeholder="ID untuk custom styling peta" />
+                    <Label htmlFor="tile-server">Tile Server URL (Opsional)</Label>
+                    <Input id="tile-server" placeholder="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   </div>
                 </CardContent>
               </Card>
